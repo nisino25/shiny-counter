@@ -118,6 +118,8 @@ export default {
 
       isTimerMoving: false,
       tempNum: 0,
+      
+      spanCount: 0,
 
     }
   },
@@ -142,15 +144,14 @@ export default {
     async startCounting(){
       if(this.isTimerMoving) return
       this.isTimerMoving = true
-      let count = 0
       while(this.isTimerMoving){
         await this.sleep(1000);
         this.seconds++
         this.tempSeconds++
         console.log(this.isTimerMoving)
-        count++
-        if(count == this.wholeSpan){
-          count = 0
+        this.spanCount++
+        if(this.spanCount >= this.wholeSpan){
+          this.spanCount = 0
           this.currentAttempt++ 
           this.tempAttempt++ 
         }
