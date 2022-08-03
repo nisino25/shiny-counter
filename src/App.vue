@@ -1,25 +1,29 @@
 <template>
   <div>
-    {{time}}
+    Total <br>
+    {{time}}: <span>#{{currentAttempt}}</span>
   </div>
   <hr>
 
-  <span>Attempt #{{currentAttempt}}</span>
-  <br>
+  <div>
+    This Session <br>
+     <p style="font-size: 280%; font-weight: bold;">{{tempTime}}: <span>#{{tempAttempt}}</span></p>
+  </div>
+  <hr>
   <span>expectation: {{expectation}}%</span>
   <br>
-  <button @click="isTimerMoving = !isTimerMoving">Timer:{{isTimerMoving}}</button>
+  <!-- <button @click="isTimerMoving = !isTimerMoving">Timer:{{isTimerMoving}}</button> -->
   <br>
-  <button @click="startCounting()">start counting </button>
-  <br>
-  <!-- <button @click="currentAttempt+= 100">Maggic </button> -->
-  <!-- &nbsp;&nbsp;&nbsp; -->
-  <button @click="reCal()">recal</button>
+  <button @click="startCounting()">Start</button> 
+  |
+  <button @click="isTimerMoving = false">Pause</button> 
+  <br><br>
+  <button @click="reCal()">recal</button>  &nbsp;
   <input type="number" v-model="tempNum">
   <hr>
 
   <div class="table">
-    <table style="margin-left: -100px;">
+    <table style="margin-left: -80px;">
       <thead>
         <tr>
           <th class="primary" scope="col">#</th>
@@ -39,7 +43,7 @@
       </tbody>
     </table>
 
-    <table style="margin-left: 20px;">
+    <table style="margin-left: 10px;">
       <thead>
         <tr>
           <th class="primary" scope="col">#</th>
@@ -59,7 +63,7 @@
       </tbody>
     </table>
 
-    <table style="margin-left: 20px;">
+    <table style="margin-left: 10px;">
       <thead>
         <tr>
           <th class="primary" scope="col">#</th>
@@ -102,11 +106,17 @@ export default {
       currentAttempt: 0,
 
       tableData: [],
+
       hours: 0,
       minutes: 0,
       seconds: 0,
 
-      isTimerMoving: true,
+      tempHours: 0,
+      tempMinutes: 0,
+      tempSeconds: 0,
+      tempAttempt: 0,
+
+      isTimerMoving: false,
       tempNum: 0,
 
     }
@@ -130,15 +140,19 @@ export default {
     },
 
     async startCounting(){
+      if(this.isTimerMoving) return
+      this.isTimerMoving = true
       let count = 0
       while(this.isTimerMoving){
         await this.sleep(1000);
         this.seconds++
+        this.tempSeconds++
         console.log(this.isTimerMoving)
         count++
         if(count == this.wholeSpan){
           count = 0
-          this.currentAttempt++
+          this.currentAttempt++ 
+          this.tempAttempt++ 
         }
       }
     },
@@ -193,6 +207,18 @@ export default {
       this.hours++
     },
 
+    tempSeconds(){
+      if(this.tempSeconds < 60) return
+      this.tempSeconds =0 
+      this.tempMinutes++
+    },
+
+    tempMinutes(){
+      if(this.tempMinutes < 60) return
+      this.tempMinutes =0 
+      this.tempHours++
+    },
+
     currentAttempt(){
       localStorage.currentAttempt = this.currentAttempt
     },
@@ -209,6 +235,11 @@ export default {
     time(){
       // this.convertNumToStr()
       return `${this.convertNumToStr(this.hours)}:${this.convertNumToStr(this.minutes)}:${this.convertNumToStr(this.seconds)}`
+    },
+
+    tempTime(){
+      // this.convertNumToStr()
+      return `${this.convertNumToStr(this.tempHours)}:${this.convertNumToStr(this.tempMinutes)}:${this.convertNumToStr(this.tempSeconds)}`
     },
 
   },
@@ -255,10 +286,11 @@ table {
   position: relative;
   border-collapse: collapse; 
   background-color: #f6f6f6;
+  font-size: 90%;
 }/* Spacing */
 td, th {
   border: 1px solid #999;
-  padding: 10px;
+  padding: 5px;
 }
 th {
   background: brown;
@@ -266,7 +298,7 @@ th {
   border-radius: 0;
   position: sticky;
   top: 0;
-  padding: 10px;
+  padding: 5px;
 }
 .primary{
   background-color: #000000
